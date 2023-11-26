@@ -121,10 +121,52 @@ const deleteSingleUser = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+// Create order for user
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.userId);
+    const orderData = req.body;
+
+    const user = await UserServices.createOrder(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+    // Check if the 'orders' property already exists for the user
+    if (!user.orders) {
+      user.orders = [];
+    }
+
+    // Append the new product to the 'orders' array
+    user.orders.push(orderData);
+
+    // Save the updated user object
+    await user.save();
+
+    // Send a success response
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getSingleUser,
   updateSingleUser,
   deleteSingleUser,
+  createOrder,
 };

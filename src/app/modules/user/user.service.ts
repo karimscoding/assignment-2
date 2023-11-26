@@ -44,10 +44,17 @@ const deleteSingleUser = async (userId: number) => {
   return result;
 };
 
+// create order for user
+const createOrder = async (userId: number) => {
+  const result = await UserModel.findOne({ userId });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDb,
   getAllUsersFromDB,
   getSingleUserById,
   updateSingleUser,
   deleteSingleUser,
+  createOrder,
 };
