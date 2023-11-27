@@ -118,7 +118,6 @@ const deleteSingleUser = async (req: Request, res: Response) => {
       data: null,
     });
   } catch (error) {
-    res.status(404).json({ success: false, message: error.message });
     console.log(error);
   }
 };
