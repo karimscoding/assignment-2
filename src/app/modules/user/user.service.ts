@@ -55,6 +55,12 @@ const getAllOrdersForUser = async (userId: number) => {
   const result = await UserModel.findOne({ userId });
   return result;
 };
+// Calculate Total Price of Orders for a Specific User
+const calculateTotalPrice = async (userId: number) => {
+  const result = await UserModel.findOne({ userId });
+  const order = result?.orders;
+  return order;
+};
 
 export const UserServices = {
   createUserIntoDb,
@@ -64,4 +70,5 @@ export const UserServices = {
   deleteSingleUser,
   createOrder,
   getAllOrdersForUser,
+  calculateTotalPrice,
 };

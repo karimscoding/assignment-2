@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Order } from './user.interface';
 import UserModel from './user.model';
 import { UserServices } from './user.service';
 
@@ -168,7 +169,7 @@ const getAllorders = async (req: Request, res: Response) => {
   try {
     const userId = Number(req.params.userId);
 
-    const user = await UserServices.createOrder(userId);
+    const user = await UserServices.getAllOrdersForUser(userId);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -190,6 +191,42 @@ const getAllorders = async (req: Request, res: Response) => {
   }
 };
 
+const calculateTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    const result = await UserServices.calculateTotalPrice(userId);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+
+    const calculatePrice = (order: Order) => {
+      return order.reduce(
+        (total, order) => total + (order.price * order.quantity || 0),
+        0,
+      );
+    };
+
+    const totalPrice = calculatePrice(result);
+
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: { totalPrice },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
@@ -198,4 +235,5 @@ export const UserControllers = {
   deleteSingleUser,
   createOrder,
   getAllorders,
+  calculateTotalPrice,
 };
